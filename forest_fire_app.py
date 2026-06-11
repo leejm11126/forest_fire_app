@@ -59,7 +59,7 @@ section[data-testid="stSidebar"] *{
     border:none;
     border-radius:18px;
     background:linear-gradient(90deg,#f97316,#ef4444);
-    color:white !important;
+    color:black !important;
     font-size:18px;
     font-weight:bold;
     transition:0.3s;
