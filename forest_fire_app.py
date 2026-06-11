@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import pandas as pd
 import joblib
@@ -371,4 +370,3 @@ st.markdown("""
 © 2026 Forest Fire Prediction System
 </center>
 """, unsafe_allow_html=True)
-```
