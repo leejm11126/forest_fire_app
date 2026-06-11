@@ -19,15 +19,18 @@ if "page" not in st.session_state:
     st.session_state.page = "home"
 
 # ==================================================
-# CSS (모든 글씨 흰색 버전)
+# CSS
 # ==================================================
 st.markdown("""
 <style>
+
+/* 전체 배경 */
 .stApp{
     background: linear-gradient(135deg,#1a0a00,#2d1200);
     color:white !important;
 }
 
+/* 전체 텍스트 */
 html, body,
 h1,h2,h3,h4,h5,h6,
 p, span, label, div, li,
@@ -35,6 +38,7 @@ strong, b {
     color:white !important;
 }
 
+/* 사이드바 */
 section[data-testid="stSidebar"]{
     background: linear-gradient(180deg,#160700,#0f0400);
 }
@@ -43,10 +47,11 @@ section[data-testid="stSidebar"] *{
     color:white !important;
 }
 
-.stSelectbox *{
-    color:black !important;
-}
+/* =========================
+   Selectbox
+========================= */
 
+/* 선택된 값이 보이는 박스 */
 .stSelectbox div[data-baseweb="select"] > div{
     background:#1a0a00 !important;
     color:white !important;
@@ -54,6 +59,36 @@ section[data-testid="stSidebar"] *{
     border-radius:18px !important;
 }
 
+/* 선택된 텍스트 */
+.stSelectbox div[data-baseweb="select"] span{
+    color:white !important;
+}
+
+/* 펼쳐진 메뉴 배경 */
+div[role="listbox"]{
+    background:#f0f0f0 !important;
+}
+
+/* 메뉴 항목 */
+div[role="option"]{
+    background:#f0f0f0 !important;
+    color:black !important;
+}
+
+/* 메뉴 항목 텍스트 */
+div[role="option"] *{
+    color:black !important;
+}
+
+/* 마우스 올렸을 때 */
+div[role="option"]:hover{
+    background:#dddddd !important;
+    color:black !important;
+}
+
+/* =========================
+   버튼
+========================= */
 .stButton > button{
     width:100%;
     height:60px;
@@ -70,6 +105,9 @@ section[data-testid="stSidebar"] *{
     transform:translateY(-2px);
 }
 
+/* =========================
+   카드
+========================= */
 .main-card{
     background:rgba(255,255,255,0.07);
     border-radius:24px;
@@ -77,6 +115,9 @@ section[data-testid="stSidebar"] *{
     border:1px solid rgba(255,150,50,0.2);
 }
 
+/* =========================
+   Slider
+========================= */
 [data-testid="stSlider"] label{
     color:white !important;
     font-size:16px !important;
@@ -88,6 +129,9 @@ section[data-testid="stSidebar"] *{
     font-weight:bold !important;
 }
 
+/* =========================
+   Metric
+========================= */
 [data-testid="metric-container"]{
     background:rgba(255,255,255,0.08);
     border-radius:20px;
@@ -103,6 +147,9 @@ section[data-testid="stSidebar"] *{
     color:white !important;
 }
 
+/* =========================
+   Alert
+========================= */
 [data-testid="stAlert"]{
     background:rgba(255,255,255,0.08) !important;
 }
@@ -111,19 +158,25 @@ section[data-testid="stSidebar"] *{
     color:white !important;
 }
 
+/* =========================
+   Markdown
+========================= */
 .stMarkdown,
 .stMarkdown *{
     color:white !important;
 }
 
+/* Footer */
 .footer{
     color:white !important;
     text-align:center;
 }
 
+/* Divider */
 hr{
     border-color:rgba(255,255,255,0.15) !important;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
