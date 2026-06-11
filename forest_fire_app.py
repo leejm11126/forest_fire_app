@@ -26,7 +26,15 @@ st.markdown("""
 /* 전체 배경 */
 .stApp{
     background: linear-gradient(135deg,#1a0a00,#2d1200);
-    color:white;
+    color:white !important;
+}
+
+/* 모든 텍스트 강제 흰색 */
+html, body,
+h1,h2,h3,h4,h5,h6,
+p, span, label, div, li,
+strong, b {
+    color:white !important;
 }
 
 /* 사이드바 */
@@ -34,15 +42,18 @@ section[data-testid="stSidebar"]{
     background: linear-gradient(180deg,#160700,#0f0400);
 }
 
-/* 사이드바 텍스트 */
 section[data-testid="stSidebar"] *{
     color:white !important;
 }
 
 /* Selectbox */
+.stSelectbox *{
+    color:white !important;
+}
+
 .stSelectbox div[data-baseweb="select"] > div{
-    background: rgba(255,255,255,0.05) !important;
-    border: 2px solid #ff5a36 !important;
+    background: rgba(255,255,255,0.08) !important;
+    border:2px solid #ff5a36 !important;
     border-radius:18px !important;
 }
 
@@ -71,28 +82,66 @@ section[data-testid="stSidebar"] *{
     border:1px solid rgba(255,150,50,0.2);
 }
 
-/* metric */
+/* 슬라이더 */
+[data-testid="stSlider"] label{
+    color:white !important;
+    font-size:16px !important;
+    font-weight:600 !important;
+}
+
+[data-testid="stSlider"] p{
+    color:#ffb347 !important;
+    font-weight:bold !important;
+}
+
+/* Metric 카드 */
 [data-testid="metric-container"]{
     background:rgba(255,255,255,0.08);
     border-radius:20px;
     padding:15px;
+    border:1px solid rgba(255,255,255,0.1);
 }
 
-/* 제목 */
-h1,h2,h3{
+/* Metric 내부 전부 흰색 */
+[data-testid="metric-container"] *{
     color:white !important;
 }
 
-/* 정보창 */
-[data-testid="stAlert"]{
-    background:rgba(255,255,255,0.08);
-    color:white;
+/* Metric 값 */
+[data-testid="stMetricValue"]{
+    color:white !important;
+    font-size:2rem !important;
+    font-weight:bold !important;
 }
 
-/* 라디오 제거 */
-div[role="radiogroup"]{
-    gap:10px;
+/* Alert */
+[data-testid="stAlert"]{
+    background:rgba(255,255,255,0.08) !important;
 }
+
+[data-testid="stAlert"] *{
+    color:white !important;
+}
+
+/* Markdown */
+.stMarkdown,
+.stMarkdown *{
+    color:white !important;
+}
+
+/* Footer */
+.footer{
+    color:white !important;
+    text-align:center;
+}
+
+/* Divider */
+hr{
+    border-color:rgba(255,255,255,0.15) !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 </style>
 """, unsafe_allow_html=True)
