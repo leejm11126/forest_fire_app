@@ -44,7 +44,7 @@ section[data-testid="stSidebar"] *{
 }
 
 .stSelectbox *{
-    color:white !important;
+    color:black !important;
 }
 
 .stSelectbox div[data-baseweb="select"] > div{
