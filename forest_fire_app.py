@@ -58,7 +58,31 @@ section[data-testid="stSidebar"] *{
     border:2px solid #ff5a36 !important;
     border-radius:18px !important;
 }
+/* 드롭다운 펼쳤을 때 전체 메뉴 */
+div[role="listbox"]{
+    background:#f0f0f0 !important;
+}
 
+/* 메뉴 안의 모든 글자 */
+div[role="listbox"] *{
+    color:black !important;
+}
+
+/* 옵션 */
+div[role="option"]{
+    color:black !important;
+    background:#f0f0f0 !important;
+}
+
+/* 옵션 내부 span */
+div[role="option"] span{
+    color:black !important;
+}
+
+/* 선택 안 된 항목 */
+li{
+    color:black !important;
+}
 /* 선택된 텍스트 */
 .stSelectbox div[data-baseweb="select"] span{
     color:white !important;
