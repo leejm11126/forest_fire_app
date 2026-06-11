@@ -48,7 +48,8 @@ section[data-testid="stSidebar"] *{
 }
 
 .stSelectbox div[data-baseweb="select"] > div{
-    background: rgba(255,255,255,0.08) !important;
+    background:#1a0a00 !important;
+    color:white !important;
     border:2px solid #ff5a36 !important;
     border-radius:18px !important;
 }
@@ -59,7 +60,7 @@ section[data-testid="stSidebar"] *{
     border:none;
     border-radius:18px;
     background:linear-gradient(90deg,#f97316,#ef4444);
-    color:black !important;
+    color:white !important;
     font-size:18px;
     font-weight:bold;
     transition:0.3s;
