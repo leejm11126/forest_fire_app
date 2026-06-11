@@ -1,15 +1,29 @@
+```python
 import streamlit as st
 import pandas as pd
 import joblib
 
-# ---------------- 페이지 설정 ----------------
+# ==========================
+# 페이지 설정
+# ==========================
 st.set_page_config(
-    page_title="산불위험지수 예측 시스템",
+    page_title="Forest Fire Prediction System",
     page_icon="🔥",
     layout="wide"
 )
 
-# ---------------- CSS 스타일 ----------------
+# ==========================
+# 세션 상태
+# ==========================
+if "lang" not in st.session_state:
+    st.session_state.lang = "한국어"
+
+if "page" not in st.session_state:
+    st.session_state.page = "홈"
+
+# ==========================
+# CSS
+# ==========================
 st.markdown("""
 <style>
 
@@ -19,188 +33,342 @@ st.markdown("""
     color: #f5f5f5;
 }
 
-/* 메인 카드 */
+/* 카드 */
 .main-card {
     background: rgba(255,255,255,0.07);
     padding: 2rem;
     border-radius: 24px;
     border: 1px solid rgba(255,150,50,0.2);
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin-top: 1rem;
 }
 
 /* 제목 */
-h1, h2, h3 {
-    color: #ffffff !important;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-}
-
-/* 일반 텍스트 */
-p, label, .stMarkdown, caption {
-    color: #f0e6d3 !important;
-    font-size: 1rem !important;
-}
-
-/* 슬라이더 레이블 */
-[data-testid="stSlider"] label {
-    color: #ffd9b3 !important;
-    font-size: 1.05rem !important;
-    font-weight: 600 !important;
-}
-
-/* 슬라이더 숫자 */
-[data-testid="stSlider"] p {
-    color: #ffb347 !important;
-    font-size: 1.1rem !important;
-    font-weight: bold !important;
-}
-
-/* metric 제목 */
-[data-testid="metric-container"] label {
-    color: #ffd9b3 !important;
-    font-size: 1rem !important;
-    font-weight: 600 !important;
-}
-
-/* metric 값 */
-[data-testid="metric-container"] [data-testid="stMetricValue"] {
-    color: #ffffff !important;
-    font-size: 1.8rem !important;
-    font-weight: bold !important;
-}
-
-/* metric 카드 */
-[data-testid="metric-container"] {
-    background: rgba(255,255,255,0.08);
-    border-radius: 18px;
-    padding: 1rem;
-    border: 1px solid rgba(255,150,50,0.2);
+h1,h2,h3{
+    color:white !important;
 }
 
 /* 버튼 */
-.stButton > button {
-    width: 100%;
-    height: 3.2rem;
-    border-radius: 16px;
-    border: none;
-    background: linear-gradient(90deg, #f97316, #ef4444);
-    color: white !important;
-    font-size: 1.1rem !important;
-    font-weight: bold !important;
-    transition: 0.3s;
+.stButton > button{
+    width:100%;
+    border-radius:15px;
+    background:linear-gradient(90deg,#f97316,#ef4444);
+    color:white;
+    border:none;
+    font-weight:bold;
+    height:3rem;
 }
 
-.stButton > button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(249,115,22,0.4);
+/* 메트릭 */
+[data-testid="metric-container"]{
+    background:rgba(255,255,255,0.08);
+    border-radius:18px;
+    padding:15px;
 }
 
-/* info 박스 */
-[data-testid="stAlert"] {
-    background: rgba(255,200,100,0.1) !important;
-    border: 1px solid rgba(255,150,50,0.3) !important;
-    color: #ffe0b2 !important;
-    font-size: 1.05rem !important;
-}
-
-/* caption */
-[data-testid="stCaptionContainer"] p {
-    color: #ffcc88 !important;
-    font-size: 0.95rem !important;
+/* 사이드바 */
+section[data-testid="stSidebar"]{
+    background:#140800;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- 모델 로드 ----------------
+# ==========================
+# 모델 로드
+# ==========================
 model = joblib.load("forest_fire_model.pkl")
 
-# ---------------- 메인 ----------------
-st.markdown('<div class="main-card">', unsafe_allow_html=True)
+# ==========================
+# 사이드바
+# ==========================
+with st.sidebar:
 
-st.title("🔥 산불위험지수 예측 시스템")
-st.caption("기상 데이터를 입력하면 AI가 산불위험지수(FWI)를 예측합니다.")
+    st.title("🔥 MENU")
 
-st.write("")
+    language = st.selectbox(
+        "🌍 Language",
+        ["한국어", "English"]
+    )
 
-# ---------------- 슬라이더 입력 ----------------
-st.subheader("📌 기상 데이터 입력")
+    st.session_state.lang = language
 
-col1, col2 = st.columns(2)
+    st.divider()
 
-with col1:
-    temperature = st.slider("🌡️ 기온 (°C)", min_value=0.0, max_value=50.0, value=30.0, step=0.5)
-    wind = st.slider("💨 풍속 (km/h)", min_value=0.0, max_value=50.0, value=15.0, step=0.5)
+    if language == "한국어":
 
-with col2:
-    humidity = st.slider("💧 상대습도 (%)", min_value=0.0, max_value=100.0, value=40.0, step=1.0)
-    rain = st.slider("🌧️ 강수량 (mm)", min_value=0.0, max_value=10.0, value=0.0, step=0.1)
+        page = st.radio(
+            "📌 메뉴",
+            ["홈", "산불 예측", "시스템 소개"]
+        )
 
-st.write("")
-
-# ---------------- 현재 입력값 표시 ----------------
-m1, m2, m3, m4 = st.columns(4)
-with m1:
-    st.metric("기온", f"{temperature}°C")
-with m2:
-    st.metric("상대습도", f"{humidity}%")
-with m3:
-    st.metric("풍속", f"{wind}km/h")
-with m4:
-    st.metric("강수량", f"{rain}mm")
-
-st.write("")
-
-# ---------------- 예측 버튼 ----------------
-if st.button("🔍 산불위험지수 예측"):
-
-    input_data = pd.DataFrame([[temperature, humidity, wind, rain]],
-                               columns=['기온', '상대습도', '풍속', '강수량'])
-
-    predicted_fwi = model.predict(input_data)[0]
-
-    if predicted_fwi < 0:
-        risk_level, description, color = "안전", "산불 발생 가능성이 거의 없습니다.", "green"
-    elif predicted_fwi < 5.2:
-        risk_level, description, color = "낮음", "산불 발생 가능성이 낮습니다.", "blue"
-    elif predicted_fwi < 11.2:
-        risk_level, description, color = "보통", "산불 발생 가능성이 있습니다. 주의하세요.", "yellow"
-    elif predicted_fwi < 21.3:
-        risk_level, description, color = "높음", "산불 발생 가능성이 높습니다! 각별히 주의하세요.", "orange"
-    elif predicted_fwi < 38.0:
-        risk_level, description, color = "매우 높음", "산불 발생 위험이 매우 높습니다! 즉각 대비하세요.", "red"
     else:
-        risk_level, description, color = "극도로 위험", "산불 발생 위험이 극도로 높습니다! 즉시 대피하세요.", "red"
+
+        page = st.radio(
+            "📌 Menu",
+            ["Home", "Prediction", "About"]
+        )
+
+# ==========================
+# 홈
+# ==========================
+if page in ["홈", "Home"]:
+
+    st.markdown("<div class='main-card'>", unsafe_allow_html=True)
+
+    if language == "한국어":
+
+        st.title("🔥 산불위험지수 예측 시스템")
+
+        st.markdown("""
+        ## 환영합니다.
+
+        이 시스템은 기상 데이터를 기반으로
+        AI가 산불 위험도(FWI)를 예측합니다.
+
+        ### 제공 기능
+
+        - 🔥 산불 위험도 예측
+        - 📊 실시간 위험도 계산
+        - 🌍 다국어 지원
+
+        왼쪽 메뉴에서 시작하세요.
+        """)
+
+    else:
+
+        st.title("🔥 Forest Fire Risk Prediction System")
+
+        st.markdown("""
+        ## Welcome
+
+        This system predicts
+        Forest Fire Risk (FWI)
+        using weather data.
+
+        ### Features
+
+        - 🔥 Fire Risk Prediction
+        - 📊 Real-time Risk Analysis
+        - 🌍 Multi-language Support
+
+        Start from the left menu.
+        """)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# ==========================
+# 예측 페이지
+# ==========================
+elif page in ["산불 예측", "Prediction"]:
+
+    st.markdown("<div class='main-card'>", unsafe_allow_html=True)
+
+    if language == "한국어":
+        st.title("🔥 산불위험지수 예측")
+        st.caption("기상 데이터를 입력하면 AI가 FWI를 예측합니다.")
+    else:
+        st.title("🔥 Fire Risk Prediction")
+        st.caption("Enter weather data to predict FWI.")
 
     st.write("")
-    st.subheader("📊 예측 결과")
 
-    r1, r2 = st.columns(2)
-    with r1:
-        st.metric(label="예측 산불위험지수 (FWI)", value=f"{predicted_fwi:.1f}")
-    with r2:
-        st.metric(label="위험도", value=risk_level)
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        if language == "한국어":
+            temperature = st.slider("🌡️ 기온 (°C)", 0.0, 50.0, 30.0, 0.5)
+            wind = st.slider("💨 풍속 (km/h)", 0.0, 50.0, 15.0, 0.5)
+        else:
+            temperature = st.slider("🌡️ Temperature (°C)", 0.0, 50.0, 30.0, 0.5)
+            wind = st.slider("💨 Wind Speed (km/h)", 0.0, 50.0, 15.0, 0.5)
+
+    with col2:
+
+        if language == "한국어":
+            humidity = st.slider("💧 상대습도 (%)", 0.0, 100.0, 40.0, 1.0)
+            rain = st.slider("🌧️ 강수량 (mm)", 0.0, 10.0, 0.0, 0.1)
+        else:
+            humidity = st.slider("💧 Humidity (%)", 0.0, 100.0, 40.0, 1.0)
+            rain = st.slider("🌧️ Rainfall (mm)", 0.0, 10.0, 0.0, 0.1)
 
     st.write("")
-    st.markdown(f"### :{color}[{risk_level}]")
-    st.info(f"💬 {description}")
 
-    progress_value = min(predicted_fwi / 38.0, 1.0) if predicted_fwi > 0 else 0.0
-    st.progress(progress_value)
-    st.caption(f"FWI 기준 위험도: {progress_value * 100:.1f}%")
+    m1, m2, m3, m4 = st.columns(4)
 
-st.markdown('</div>', unsafe_allow_html=True)
+    with m1:
+        st.metric("Temperature" if language=="English" else "기온",
+                  f"{temperature}°C")
 
+    with m2:
+        st.metric("Humidity" if language=="English" else "상대습도",
+                  f"{humidity}%")
 
-# ---------------- 푸터 ----------------
-st.write("")
+    with m3:
+        st.metric("Wind" if language=="English" else "풍속",
+                  f"{wind}km/h")
+
+    with m4:
+        st.metric("Rainfall" if language=="English" else "강수량",
+                  f"{rain}mm")
+
+    st.write("")
+
+    button_text = (
+        "🔍 Predict Fire Risk"
+        if language == "English"
+        else "🔍 산불위험지수 예측"
+    )
+
+    if st.button(button_text):
+
+        input_data = pd.DataFrame(
+            [[temperature, humidity, wind, rain]],
+            columns=['기온', '상대습도', '풍속', '강수량']
+        )
+
+        predicted_fwi = model.predict(input_data)[0]
+
+        if predicted_fwi < 0:
+            risk = "Safe"
+            desc = "Very low probability of fire."
+        elif predicted_fwi < 5.2:
+            risk = "Low"
+            desc = "Low fire risk."
+        elif predicted_fwi < 11.2:
+            risk = "Moderate"
+            desc = "Possible fire occurrence."
+        elif predicted_fwi < 21.3:
+            risk = "High"
+            desc = "High probability of fire."
+        elif predicted_fwi < 38:
+            risk = "Very High"
+            desc = "Very dangerous condition."
+        else:
+            risk = "Extreme"
+            desc = "Immediate response required."
+
+        if language == "한국어":
+
+            if predicted_fwi < 0:
+                risk="안전"
+                desc="산불 발생 가능성이 거의 없습니다."
+            elif predicted_fwi < 5.2:
+                risk="낮음"
+                desc="산불 발생 가능성이 낮습니다."
+            elif predicted_fwi < 11.2:
+                risk="보통"
+                desc="주의가 필요합니다."
+            elif predicted_fwi < 21.3:
+                risk="높음"
+                desc="산불 발생 위험이 높습니다."
+            elif predicted_fwi < 38:
+                risk="매우 높음"
+                desc="산불 위험이 매우 높습니다."
+            else:
+                risk="극도로 위험"
+                desc="즉시 대비가 필요합니다."
+
+        st.subheader(
+            "📊 Prediction Result"
+            if language=="English"
+            else "📊 예측 결과"
+        )
+
+        c1, c2 = st.columns(2)
+
+        with c1:
+            st.metric(
+                "Predicted FWI"
+                if language=="English"
+                else "예측 산불위험지수",
+                f"{predicted_fwi:.1f}"
+            )
+
+        with c2:
+            st.metric(
+                "Risk Level"
+                if language=="English"
+                else "위험도",
+                risk
+            )
+
+        st.info(desc)
+
+        progress = min(predicted_fwi / 38.0, 1.0)
+        st.progress(progress)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# ==========================
+# 소개 페이지
+# ==========================
+else:
+
+    st.markdown("<div class='main-card'>", unsafe_allow_html=True)
+
+    if language == "한국어":
+
+        st.title("ℹ️ 시스템 소개")
+
+        st.markdown("""
+        ### 산불위험지수(FWI) 예측 시스템
+
+        본 시스템은 기상 데이터를 이용하여
+        산불 발생 위험도를 예측합니다.
+
+        #### 사용 변수
+
+        - 기온
+        - 상대습도
+        - 풍속
+        - 강수량
+
+        #### AI 모델
+
+        머신러닝 회귀모델 기반
+
+        #### 데이터
+
+        Algerian Forest Fires Dataset
+        """)
+
+    else:
+
+        st.title("ℹ️ About System")
+
+        st.markdown("""
+        ### Forest Fire Prediction System
+
+        This system predicts forest fire risk
+        using meteorological data.
+
+        #### Variables
+
+        - Temperature
+        - Humidity
+        - Wind Speed
+        - Rainfall
+
+        #### AI Model
+
+        Machine Learning Regression Model
+
+        #### Dataset
+
+        Algerian Forest Fires Dataset
+        """)
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# ==========================
+# Footer
+# ==========================
 st.divider()
-st.markdown("""
-<p style='text-align: center; color: #a07850; font-size: 0.8rem;'>
-    © 2026 산불위험지수 예측 시스템 | 
-    Data: <a href='https://www.kaggle.com/datasets/nitinchoudhary012/algerian-forest-fires-dataset' target='_blank' style='color: #f97316;'>Kaggle - Algerian Forest Fires Dataset</a> | 
-    FWI 기준: Canadian Forest Fire Weather Index System
-</p>
-""", unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("""
+<center>
+© 2026 Forest Fire Prediction System
+</center>
+""", unsafe_allow_html=True)
+```
