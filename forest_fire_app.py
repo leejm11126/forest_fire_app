@@ -2,43 +2,80 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# ==========================
+# ==================================================
 # 페이지 설정
-# ==========================
+# ==================================================
 st.set_page_config(
-    page_title="Forest Fire Prediction System",
+    page_title="산불위험지수 예측 시스템",
     page_icon="🔥",
     layout="wide"
 )
 
-# ==========================
+# ==================================================
 # 세션 상태
-# ==========================
-if "lang" not in st.session_state:
-    st.session_state.lang = "한국어"
-
+# ==================================================
 if "page" not in st.session_state:
-    st.session_state.page = "홈"
+    st.session_state.page = "home"
 
-# ==========================
+# ==================================================
 # CSS
-# ==========================
+# ==================================================
 st.markdown("""
 <style>
 
 /* 전체 배경 */
-.stApp {
-    background: linear-gradient(135deg, #1a0a00, #2d1200);
-    color: #f5f5f5;
+.stApp{
+    background: linear-gradient(135deg,#1a0a00,#2d1200);
+    color:white;
+}
+
+/* 사이드바 */
+section[data-testid="stSidebar"]{
+    background: linear-gradient(180deg,#160700,#0f0400);
+}
+
+/* 사이드바 텍스트 */
+section[data-testid="stSidebar"] *{
+    color:white !important;
+}
+
+/* Selectbox */
+.stSelectbox div[data-baseweb="select"] > div{
+    background: rgba(255,255,255,0.05) !important;
+    border: 2px solid #ff5a36 !important;
+    border-radius:18px !important;
+}
+
+/* 버튼 */
+.stButton > button{
+    width:100%;
+    height:60px;
+    border:none;
+    border-radius:18px;
+    background:linear-gradient(90deg,#f97316,#ef4444);
+    color:white !important;
+    font-size:18px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.stButton > button:hover{
+    transform:translateY(-2px);
 }
 
 /* 카드 */
-.main-card {
-    background: rgba(255,255,255,0.07);
-    padding: 2rem;
-    border-radius: 24px;
-    border: 1px solid rgba(255,150,50,0.2);
-    margin-top: 1rem;
+.main-card{
+    background:rgba(255,255,255,0.07);
+    border-radius:24px;
+    padding:30px;
+    border:1px solid rgba(255,150,50,0.2);
+}
+
+/* metric */
+[data-testid="metric-container"]{
+    background:rgba(255,255,255,0.08);
+    border-radius:20px;
+    padding:15px;
 }
 
 /* 제목 */
@@ -46,71 +83,70 @@ h1,h2,h3{
     color:white !important;
 }
 
-/* 버튼 */
-.stButton > button{
-    width:100%;
-    border-radius:15px;
-    background:linear-gradient(90deg,#f97316,#ef4444);
-    color:white;
-    border:none;
-    font-weight:bold;
-    height:3rem;
-}
-
-/* 메트릭 */
-[data-testid="metric-container"]{
+/* 정보창 */
+[data-testid="stAlert"]{
     background:rgba(255,255,255,0.08);
-    border-radius:18px;
-    padding:15px;
+    color:white;
 }
 
-/* 사이드바 */
-section[data-testid="stSidebar"]{
-    background:#140800;
+/* 라디오 제거 */
+div[role="radiogroup"]{
+    gap:10px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# ==========================
+# ==================================================
 # 모델 로드
-# ==========================
+# ==================================================
 model = joblib.load("forest_fire_model.pkl")
 
-# ==========================
+# ==================================================
 # 사이드바
-# ==========================
+# ==================================================
 with st.sidebar:
 
-    st.title("🔥 MENU")
+    st.markdown("## 🌍 Language")
 
     language = st.selectbox(
-        "🌍 Language",
+        "",
         ["한국어", "English"]
     )
-
-    st.session_state.lang = language
 
     st.divider()
 
     if language == "한국어":
+        st.markdown("## 📌 메뉴")
+    else:
+        st.markdown("## 📌 Menu")
 
-        page = st.radio(
-            "📌 메뉴",
-            ["홈", "산불 예측", "시스템 소개"]
-        )
+    if language == "한국어":
+
+        if st.button("🏠 홈"):
+            st.session_state.page = "home"
+
+        if st.button("🔥 산불 예측"):
+            st.session_state.page = "predict"
+
+        if st.button("ℹ️ 시스템 소개"):
+            st.session_state.page = "about"
 
     else:
 
-        page = st.radio(
-            "📌 Menu",
-            ["Home", "Prediction", "About"]
-        )
+        if st.button("🏠 Home"):
+            st.session_state.page = "home"
 
-# ==========================
-# 홈
-# ==========================
-if page in ["홈", "Home"]:
+        if st.button("🔥 Prediction"):
+            st.session_state.page = "predict"
+
+        if st.button("ℹ️ About"):
+            st.session_state.page = "about"
+
+# ==================================================
+# 홈 화면
+# ==================================================
+if st.session_state.page == "home":
 
     st.markdown("<div class='main-card'>", unsafe_allow_html=True)
 
@@ -119,16 +155,16 @@ if page in ["홈", "Home"]:
         st.title("🔥 산불위험지수 예측 시스템")
 
         st.markdown("""
-        ## 환영합니다.
+        ### 환영합니다
 
-        이 시스템은 기상 데이터를 기반으로
-        AI가 산불 위험도(FWI)를 예측합니다.
+        이 시스템은 AI를 이용하여
 
-        ### 제공 기능
+        - 🌡️ 기온
+        - 💧 상대습도
+        - 💨 풍속
+        - 🌧️ 강수량
 
-        - 🔥 산불 위험도 예측
-        - 📊 실시간 위험도 계산
-        - 🌍 다국어 지원
+        데이터를 분석하여 산불위험지수(FWI)를 예측합니다.
 
         왼쪽 메뉴에서 시작하세요.
         """)
@@ -138,36 +174,32 @@ if page in ["홈", "Home"]:
         st.title("🔥 Forest Fire Risk Prediction System")
 
         st.markdown("""
-        ## Welcome
+        ### Welcome
 
-        This system predicts
-        Forest Fire Risk (FWI)
-        using weather data.
+        This system predicts the Fire Weather Index (FWI)
+        using:
 
-        ### Features
-
-        - 🔥 Fire Risk Prediction
-        - 📊 Real-time Risk Analysis
-        - 🌍 Multi-language Support
+        - Temperature
+        - Humidity
+        - Wind Speed
+        - Rainfall
 
         Start from the left menu.
         """)
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ==========================
+# ==================================================
 # 예측 페이지
-# ==========================
-elif page in ["산불 예측", "Prediction"]:
+# ==================================================
+elif st.session_state.page == "predict":
 
     st.markdown("<div class='main-card'>", unsafe_allow_html=True)
 
     if language == "한국어":
         st.title("🔥 산불위험지수 예측")
-        st.caption("기상 데이터를 입력하면 AI가 FWI를 예측합니다.")
     else:
         st.title("🔥 Fire Risk Prediction")
-        st.caption("Enter weather data to predict FWI.")
 
     st.write("")
 
@@ -175,134 +207,108 @@ elif page in ["산불 예측", "Prediction"]:
 
     with col1:
 
-        if language == "한국어":
-            temperature = st.slider("🌡️ 기온 (°C)", 0.0, 50.0, 30.0, 0.5)
-            wind = st.slider("💨 풍속 (km/h)", 0.0, 50.0, 15.0, 0.5)
-        else:
-            temperature = st.slider("🌡️ Temperature (°C)", 0.0, 50.0, 30.0, 0.5)
-            wind = st.slider("💨 Wind Speed (km/h)", 0.0, 50.0, 15.0, 0.5)
+        temperature = st.slider(
+            "🌡️ 기온 (°C)" if language=="한국어"
+            else "🌡️ Temperature (°C)",
+            0.0,50.0,30.0,0.5
+        )
+
+        wind = st.slider(
+            "💨 풍속 (km/h)" if language=="한국어"
+            else "💨 Wind Speed (km/h)",
+            0.0,50.0,15.0,0.5
+        )
 
     with col2:
 
-        if language == "한국어":
-            humidity = st.slider("💧 상대습도 (%)", 0.0, 100.0, 40.0, 1.0)
-            rain = st.slider("🌧️ 강수량 (mm)", 0.0, 10.0, 0.0, 0.1)
-        else:
-            humidity = st.slider("💧 Humidity (%)", 0.0, 100.0, 40.0, 1.0)
-            rain = st.slider("🌧️ Rainfall (mm)", 0.0, 10.0, 0.0, 0.1)
+        humidity = st.slider(
+            "💧 상대습도 (%)" if language=="한국어"
+            else "💧 Humidity (%)",
+            0.0,100.0,40.0,1.0
+        )
+
+        rain = st.slider(
+            "🌧️ 강수량 (mm)" if language=="한국어"
+            else "🌧️ Rainfall (mm)",
+            0.0,10.0,0.0,0.1
+        )
 
     st.write("")
 
-    m1, m2, m3, m4 = st.columns(4)
+    m1,m2,m3,m4 = st.columns(4)
 
-    with m1:
-        st.metric("Temperature" if language=="English" else "기온",
-                  f"{temperature}°C")
+    m1.metric("기온" if language=="한국어" else "Temp",
+              f"{temperature}°C")
 
-    with m2:
-        st.metric("Humidity" if language=="English" else "상대습도",
-                  f"{humidity}%")
+    m2.metric("습도" if language=="한국어" else "Humidity",
+              f"{humidity}%")
 
-    with m3:
-        st.metric("Wind" if language=="English" else "풍속",
-                  f"{wind}km/h")
+    m3.metric("풍속" if language=="한국어" else "Wind",
+              f"{wind} km/h")
 
-    with m4:
-        st.metric("Rainfall" if language=="English" else "강수량",
-                  f"{rain}mm")
+    m4.metric("강수량" if language=="한국어" else "Rain",
+              f"{rain} mm")
 
     st.write("")
 
-    button_text = (
-        "🔍 Predict Fire Risk"
-        if language == "English"
-        else "🔍 산불위험지수 예측"
+    btn_text = (
+        "🔍 산불위험지수 예측"
+        if language=="한국어"
+        else "🔍 Predict"
     )
 
-    if st.button(button_text):
+    if st.button(btn_text):
 
-        input_data = pd.DataFrame(
+        input_df = pd.DataFrame(
             [[temperature, humidity, wind, rain]],
-            columns=['기온', '상대습도', '풍속', '강수량']
+            columns=["기온","상대습도","풍속","강수량"]
         )
 
-        predicted_fwi = model.predict(input_data)[0]
+        predicted_fwi = model.predict(input_df)[0]
 
-        if predicted_fwi < 0:
-            risk = "Safe"
-            desc = "Very low probability of fire."
-        elif predicted_fwi < 5.2:
-            risk = "Low"
-            desc = "Low fire risk."
+        if predicted_fwi < 5.2:
+            risk = "낮음" if language=="한국어" else "Low"
+
         elif predicted_fwi < 11.2:
-            risk = "Moderate"
-            desc = "Possible fire occurrence."
+            risk = "보통" if language=="한국어" else "Moderate"
+
         elif predicted_fwi < 21.3:
-            risk = "High"
-            desc = "High probability of fire."
+            risk = "높음" if language=="한국어" else "High"
+
         elif predicted_fwi < 38:
-            risk = "Very High"
-            desc = "Very dangerous condition."
+            risk = "매우 높음" if language=="한국어" else "Very High"
+
         else:
-            risk = "Extreme"
-            desc = "Immediate response required."
-
-        if language == "한국어":
-
-            if predicted_fwi < 0:
-                risk="안전"
-                desc="산불 발생 가능성이 거의 없습니다."
-            elif predicted_fwi < 5.2:
-                risk="낮음"
-                desc="산불 발생 가능성이 낮습니다."
-            elif predicted_fwi < 11.2:
-                risk="보통"
-                desc="주의가 필요합니다."
-            elif predicted_fwi < 21.3:
-                risk="높음"
-                desc="산불 발생 위험이 높습니다."
-            elif predicted_fwi < 38:
-                risk="매우 높음"
-                desc="산불 위험이 매우 높습니다."
-            else:
-                risk="극도로 위험"
-                desc="즉시 대비가 필요합니다."
+            risk = "극도로 위험" if language=="한국어" else "Extreme"
 
         st.subheader(
-            "📊 Prediction Result"
-            if language=="English"
-            else "📊 예측 결과"
+            "📊 예측 결과"
+            if language=="한국어"
+            else "📊 Prediction Result"
         )
 
-        c1, c2 = st.columns(2)
+        c1,c2 = st.columns(2)
 
-        with c1:
-            st.metric(
-                "Predicted FWI"
-                if language=="English"
-                else "예측 산불위험지수",
-                f"{predicted_fwi:.1f}"
-            )
+        c1.metric(
+            "예측 FWI" if language=="한국어" else "Predicted FWI",
+            f"{predicted_fwi:.2f}"
+        )
 
-        with c2:
-            st.metric(
-                "Risk Level"
-                if language=="English"
-                else "위험도",
-                risk
-            )
+        c2.metric(
+            "위험도" if language=="한국어" else "Risk Level",
+            risk
+        )
 
-        st.info(desc)
+        progress = min(predicted_fwi/38.0,1.0)
 
-        progress = min(predicted_fwi / 38.0, 1.0)
         st.progress(progress)
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ==========================
-# 소개 페이지
-# ==========================
-else:
+# ==================================================
+# 소개
+# ==================================================
+elif st.session_state.page == "about":
 
     st.markdown("<div class='main-card'>", unsafe_allow_html=True)
 
@@ -313,21 +319,17 @@ else:
         st.markdown("""
         ### 산불위험지수(FWI) 예측 시스템
 
-        본 시스템은 기상 데이터를 이용하여
-        산불 발생 위험도를 예측합니다.
+        기상 데이터를 기반으로
+        산불 발생 위험도를 예측하는 AI 시스템입니다.
 
-        #### 사용 변수
+        #### 입력 변수
 
         - 기온
         - 상대습도
         - 풍속
         - 강수량
 
-        #### AI 모델
-
-        머신러닝 회귀모델 기반
-
-        #### 데이터
+        #### 데이터셋
 
         Algerian Forest Fires Dataset
         """)
@@ -339,19 +341,14 @@ else:
         st.markdown("""
         ### Forest Fire Prediction System
 
-        This system predicts forest fire risk
-        using meteorological data.
+        AI system that predicts forest fire risk.
 
-        #### Variables
+        #### Input Variables
 
         - Temperature
         - Humidity
         - Wind Speed
         - Rainfall
-
-        #### AI Model
-
-        Machine Learning Regression Model
 
         #### Dataset
 
@@ -360,13 +357,12 @@ else:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ==========================
+# ==================================================
 # Footer
-# ==========================
+# ==================================================
 st.divider()
 
-st.markdown("""
-<center>
-© 2026 Forest Fire Prediction System
-</center>
-""", unsafe_allow_html=True)
+st.markdown(
+    "<center>© 2026 Forest Fire Prediction System</center>",
+    unsafe_allow_html=True
+)
