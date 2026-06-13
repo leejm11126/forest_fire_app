@@ -270,7 +270,7 @@ with st.sidebar:
 
     st.divider()
     st.markdown(
-        "<div style='font-size:11px;opacity:.4;text-align:center'>© 2026 ForestAI v1.0</div>",
+        "<div style='font-size:11px;opacity:.4;text-align:center'>© 2026 데이터 과학 최종 과제</div>",
         unsafe_allow_html=True
     )
 
@@ -285,7 +285,7 @@ if st.session_state.page == "home":
         st.markdown("""
         ### 환영합니다
 
-        이 시스템은 **AI 머신러닝 모델**을 활용해 기상 조건을 분석하고,
+        이 시스템은 **머신러닝 모델**을 활용해 기상 조건을 분석하고,
         **산불위험지수(FWI)** 및 **예상 필요 인력**을 실시간으로 예측합니다.
 
         #### 입력 변수
@@ -306,7 +306,7 @@ if st.session_state.page == "home":
         st.markdown("""
         ### Welcome
 
-        Thissystem analyzes weather conditions in real-time to predict
+        This system analyzes weather conditions in real-time to predict
         the **Fire Weather Index (FWI)** and estimate the **required response crew**.
 
         #### Input Variables
@@ -503,7 +503,7 @@ elif st.session_state.page == "about":
         st.markdown("""
         ### Forest Fire Risk Prediction System
 
-        AI system that predicts forest fire risk based on weather data.
+        System that predicts forest fire risk based on weather data.
 
         ---
 
