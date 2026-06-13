@@ -46,14 +46,68 @@ section[data-testid="stSidebar"] * {
 }
 
 /* ── 언어 셀렉트박스 ── */
-.stSelectbox * { color: white !important; }
+/* 선택된 값 표시 영역 */
 .stSelectbox div[data-baseweb="select"] > div {
     background: rgba(255, 255, 255, 0.08) !important;
     border: 2px solid #ff5a36 !important;
     border-radius: 18px !important;
+    color: white !important;
+}
+/* 선택된 텍스트 */
+.stSelectbox div[data-baseweb="select"] span {
+    color: white !important;
+}
+/* 드롭다운 리스트 전체 */
+div[data-baseweb="popover"],
+div[data-baseweb="menu"],
+ul[data-baseweb="menu"] {
+    background: #2d1200 !important;
+    border: 1px solid rgba(255, 90, 54, 0.4) !important;
+    border-radius: 12px !important;
+}
+/* 드롭다운 각 항목 */
+li[role="option"],
+div[role="option"] {
+    background: transparent !important;
+    color: white !important;
+}
+li[role="option"]:hover,
+div[role="option"]:hover {
+    background: rgba(255, 90, 54, 0.2) !important;
+    color: white !important;
+}
+/* 선택된 항목 */
+li[aria-selected="true"],
+div[aria-selected="true"] {
+    background: rgba(255, 90, 54, 0.3) !important;
+    color: white !important;
 }
 
-/* ── 버튼 ── */
+/* ── 사이드바 버튼 너비 통일 ── */
+section[data-testid="stSidebar"] .stButton {
+    width: 100%;
+}
+section[data-testid="stSidebar"] .stButton > button {
+    width: 100% !important;
+    min-width: 140px;
+    height: 48px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(90deg, #f97316, #ef4444);
+    color: white !important;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.3px;
+    transition: 0.25s;
+    text-align: left;
+    padding-left: 16px;
+}
+section[data-testid="stSidebar"] .stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* ── 메인 영역 버튼 ── */
 .stButton > button {
     width: 100%;
     height: 52px;
@@ -126,6 +180,11 @@ section[data-testid="stSidebar"] * {
 }
 [data-testid="stAlert"] * { color: white !important; }
 
+/* ── 테이블 ── */
+table { color: white !important; }
+thead tr th { color: white !important; border-bottom: 1px solid rgba(255,255,255,0.2) !important; }
+tbody tr td { color: white !important; border-bottom: 1px solid rgba(255,255,255,0.08) !important; }
+
 /* ── 기타 ── */
 .stMarkdown, .stMarkdown * { color: white !important; }
 .footer { color: white !important; text-align: center; font-size: 13px; opacity: 0.5; }
@@ -152,26 +211,25 @@ def estimate_crew(fwi: float, area_ha: float = 10.0) -> dict:
     FWI 및 예상 피해 면적(ha)을 기반으로 필요 인력을 산정합니다.
     기준: 산림청 산불 진화 인력 배치 지침 참고 (단계별 가중치 적용)
     """
-    if fwi < 5.2:       # 낮음
+    if fwi < 5.2:        # 낮음
         base, multiplier = 5,  1.0
-    elif fwi < 11.2:    # 보통
+    elif fwi < 11.2:     # 보통
         base, multiplier = 10, 1.2
-    elif fwi < 21.3:    # 높음
+    elif fwi < 21.3:     # 높음
         base, multiplier = 20, 1.5
-    elif fwi < 38:      # 매우 높음
+    elif fwi < 38:       # 매우 높음
         base, multiplier = 35, 1.8
-    else:               # 극위험
+    else:                # 극위험
         base, multiplier = 60, 2.2
 
     area_factor = max(1.0, math.log10(area_ha + 1) * 1.5)
     total = math.ceil(base * multiplier * area_factor)
 
-    # 역할별 비율 배분
     crew = {
-        "🚒 초동 진화대":     math.ceil(total * 0.42),
-        "🪖 산림청 특수대":   math.ceil(total * 0.26),
-        "🚑 응급·구조대":     math.ceil(total * 0.18),
-        "🎯 지휘·통제반":     math.ceil(total * 0.14),
+        "🚒 초동 진화대":   math.ceil(total * 0.42),
+        "🪖 산림청 특수대": math.ceil(total * 0.26),
+        "🚑 응급·구조대":   math.ceil(total * 0.18),
+        "🎯 지휘·통제반":   math.ceil(total * 0.14),
     }
     crew["합계"] = sum(crew.values())
     return crew
@@ -179,11 +237,11 @@ def estimate_crew(fwi: float, area_ha: float = 10.0) -> dict:
 # ==================================================
 # 위험 단계 분류
 # ==================================================
-def classify_risk(fwi: float, lang: str) -> tuple[str, str]:
-    ko = ["낮음", "보통", "높음", "매우 높음", "극도로 위험"]
-    en = ["Low", "Moderate", "High", "Very High", "Extreme"]
+def classify_risk(fwi: float, lang: str) -> tuple:
+    ko     = ["낮음", "보통", "높음", "매우 높음", "극도로 위험"]
+    en     = ["Low", "Moderate", "High", "Very High", "Extreme"]
     colors = ["#22c55e", "#eab308", "#f97316", "#ef4444", "#991b1b"]
-    if fwi < 5.2:   i = 0
+    if fwi < 5.2:    i = 0
     elif fwi < 11.2: i = 1
     elif fwi < 21.3: i = 2
     elif fwi < 38:   i = 3
@@ -201,14 +259,14 @@ with st.sidebar:
 
     if language == "한국어":
         st.markdown("## 📌 메뉴")
-        if st.button("🏠 홈"):            st.session_state.page = "home"
-        if st.button("🔥 산불 예측"):    st.session_state.page = "predict"
-        if st.button("ℹ️ 시스템 소개"):  st.session_state.page = "about"
+        if st.button("🏠 홈"):           st.session_state.page = "home"
+        if st.button("🔥 산불 예측"):   st.session_state.page = "predict"
+        if st.button("ℹ️ 시스템 소개"): st.session_state.page = "about"
     else:
         st.markdown("## 📌 Menu")
-        if st.button("🏠 Home"):          st.session_state.page = "home"
-        if st.button("🔥 Prediction"):    st.session_state.page = "predict"
-        if st.button("ℹ️ About"):         st.session_state.page = "about"
+        if st.button("🏠 Home"):         st.session_state.page = "home"
+        if st.button("🔥 Prediction"):   st.session_state.page = "predict"
+        if st.button("ℹ️ About"):        st.session_state.page = "about"
 
     st.divider()
     st.markdown(
@@ -227,7 +285,7 @@ if st.session_state.page == "home":
         st.markdown("""
         ### 환영합니다
 
-        이 시스템은 **AI 머신러닝 모델**을 활용해 기상 조건을 분석하고,  
+        이 시스템은 **AI 머신러닝 모델**을 활용해 기상 조건을 분석하고,
         **산불위험지수(FWI)** 및 **예상 필요 인력**을 실시간으로 예측합니다.
 
         #### 입력 변수
@@ -248,7 +306,7 @@ if st.session_state.page == "home":
         st.markdown("""
         ### Welcome
 
-        This AI system analyzes weather conditions in real-time to predict  
+        This AI system analyzes weather conditions in real-time to predict
         the **Fire Weather Index (FWI)** and estimate the **required response crew**.
 
         #### Input Variables
@@ -280,7 +338,6 @@ elif st.session_state.page == "predict":
         st.title("🔥 Fire Risk Prediction")
         st.caption("Enter weather data and press the predict button.")
 
-    # ── 슬라이더 ──
     col1, col2 = st.columns(2)
     with col1:
         temperature = st.slider(
@@ -301,14 +358,12 @@ elif st.session_state.page == "predict":
             0.0, 10.0, 0.0, 0.1
         )
 
-    # ── 피해 면적 (인력 산정용) ──
     st.divider()
     area_ha = st.slider(
         "🌲 예상 피해 면적 (ha)" if language == "한국어" else "🌲 Estimated Affected Area (ha)",
         1.0, 500.0, 10.0, 1.0
     )
 
-    # ── 현재 입력값 요약 ──
     st.divider()
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("기온"   if language == "한국어" else "Temp",     f"{temperature}°C")
@@ -318,7 +373,6 @@ elif st.session_state.page == "predict":
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # ── 예측 버튼 ──
     predict_label = "🔍 산불위험지수 예측하기" if language == "한국어" else "🔍 Predict Fire Risk"
     if st.button(predict_label):
 
@@ -332,23 +386,12 @@ elif st.session_state.page == "predict":
 
         # ── 예측 결과 카드 ──
         st.markdown("<div class='result-card'>", unsafe_allow_html=True)
-
-        if language == "한국어":
-            st.subheader("📊 예측 결과")
-        else:
-            st.subheader("📊 Prediction Result")
+        st.subheader("📊 예측 결과" if language == "한국어" else "📊 Prediction Result")
 
         r1, r2 = st.columns(2)
-        r1.metric(
-            "예측 FWI" if language == "한국어" else "Predicted FWI",
-            f"{predicted_fwi:.2f}"
-        )
-        r2.metric(
-            "위험도" if language == "한국어" else "Risk Level",
-            risk_label
-        )
+        r1.metric("예측 FWI" if language == "한국어" else "Predicted FWI", f"{predicted_fwi:.2f}")
+        r2.metric("위험도"   if language == "한국어" else "Risk Level",    risk_label)
 
-        # 위험도 프로그레스 바
         st.markdown(
             f"<p style='font-size:12px;opacity:.6;margin-bottom:4px'>"
             f"위험 단계: <strong style='color:{risk_color}'>{risk_label}</strong>"
@@ -356,7 +399,6 @@ elif st.session_state.page == "predict":
             unsafe_allow_html=True
         )
         st.progress(min(predicted_fwi / 38.0, 1.0))
-
         st.markdown("</div>", unsafe_allow_html=True)
 
         # ── 인력 산정 카드 ──
@@ -370,17 +412,16 @@ elif st.session_state.page == "predict":
             st.caption(f"Based on {area_ha:.0f}ha affected area · Risk level '{risk_label}'")
 
         c1, c2, c3, c4 = st.columns(4)
-        cols = [c1, c2, c3, c4]
+        cols  = [c1, c2, c3, c4]
         roles = [k for k in crew if k != "합계"]
         for col, role in zip(cols, roles):
             col.metric(role, f"{crew[role]}명" if language == "한국어" else f"{crew[role]} ppl")
 
-        # 역할별 비율 바
         st.divider()
         for role in roles:
-            pct = crew[role] / crew["합계"]
+            pct        = crew[role] / crew["합계"]
             bar_filled = int(pct * 30)
-            bar = "█" * bar_filled + "░" * (30 - bar_filled)
+            bar        = "█" * bar_filled + "░" * (30 - bar_filled)
             st.markdown(
                 f"<p style='font-size:13px;font-family:monospace'>"
                 f"{role} &nbsp; <span style='color:#a78bfa'>{bar}</span>"
@@ -408,22 +449,54 @@ elif st.session_state.page == "about":
 
         기상 데이터를 기반으로 산불 발생 위험도를 예측하는 AI 시스템입니다.
 
-        #### 모델 정보
+        ---
+
+        #### 🤖 모델 정보
         | 항목 | 내용 |
         |------|------|
-        | 알고리즘 | 부스팅 회귀 (R² = 0.654) |
-        | 학습 데이터 | Algerian Forest Fires Dataset (2012) |
+        | 알고리즘 | 부스팅 회귀 (Gradient Boosting) |
+        | R² 결정계수 | 0.654 (선형회귀 0.413 / 랜덤포레스트 0.617 대비 최고) |
+        | 학습 데이터 | Algerian Forest Fires Dataset (2012.6 ~ 9월) |
+        | 학습 지역 | 알제리 북부 2개 지역 |
         | 입력 변수 | 기온, 상대습도, 풍속, 강수량 |
         | 출력 | FWI 예측값, 위험 등급, 예상 인력 |
 
-        #### 위험 등급 기준
-        | 등급 | FWI 범위 | 설명 |
-        |------|----------|------|
-        | 낮음 | 0 ~ 5.2 | 산불 발생 가능성 낮음 |
-        | 보통 | 5.2 ~ 11.2 | 주의 필요 |
-        | 높음 | 11.2 ~ 21.3 | 산불 발생 위험 |
-        | 매우 높음 | 21.3 ~ 38 | 즉각 대응 필요 |
-        | 극위험 | 38+ | 비상 대응 체계 가동 |
+        ---
+
+        #### 🚨 위험 등급 판단 기준 (FWI 구간)
+
+        | 등급 | FWI 범위 | 설명 | 권고 조치 |
+        |------|----------|------|-----------|
+        | 🟢 낮음 | 0 ~ 5.2 | 산불 발생 가능성 낮음 | 일반 모니터링 |
+        | 🟡 보통 | 5.2 ~ 11.2 | 건조 시 주의 필요 | 순찰 강화 |
+        | 🟠 높음 | 11.2 ~ 21.3 | 산불 발생 위험 존재 | 진화 대기 |
+        | 🔴 매우 높음 | 21.3 ~ 38 | 빠른 확산 가능 | 즉각 대응 |
+        | 🔴 극위험 | 38 이상 | 대형 산불 위험 | 비상 대응 체계 가동 |
+
+        ---
+
+        #### 👥 예상 인력 산정 기준
+
+        | 역할 | 비율 | 임무 |
+        |------|------|------|
+        | 🚒 초동 진화대 | 42% | 현장 직접 진화 |
+        | 🪖 산림청 특수대 | 26% | 고위험 구역 투입 |
+        | 🚑 응급·구조대 | 18% | 인명 구조 및 응급 처치 |
+        | 🎯 지휘·통제반 | 14% | 현장 지휘 및 자원 조율 |
+
+        > 총 인력 = (FWI 단계별 기준 인원) × (피해 면적 가중치)  
+        > 피해 면적 가중치 = log₁₀(면적 + 1) × 1.5 (최솟값 1.0)
+
+        ---
+
+        #### 📊 주요 상관관계 (학습 데이터 기준)
+        | 변수 | 산불 발생과의 상관계수 | 방향 |
+        |------|----------------------|------|
+        | 기온 | 0.52 | 기온 높을수록 위험 ↑ |
+        | 가뭄지수 | 0.51 | 건조할수록 위험 ↑ |
+        | 상대습도 | -0.43 | 습도 높을수록 위험 ↓ |
+        | 강수량 | -0.38 | 강수 많을수록 위험 ↓ |
+        | 풍속 | -0.07 | 상관 미미 |
         """)
     else:
         st.title("ℹ️ About System")
@@ -432,22 +505,54 @@ elif st.session_state.page == "about":
 
         AI system that predicts forest fire risk based on weather data.
 
-        #### Model Info
+        ---
+
+        #### 🤖 Model Info
         | Item | Detail |
         |------|--------|
-        | Algorithm | Boosting Regression (R² = 0.654) |
-        | Training Data | Algerian Forest Fires Dataset (2012) |
+        | Algorithm | Gradient Boosting Regression |
+        | R² Score | 0.654 (best vs Linear 0.413 / RF 0.617) |
+        | Training Data | Algerian Forest Fires Dataset (Jun–Sep 2012) |
+        | Region | 2 regions in northern Algeria |
         | Input Variables | Temp, Humidity, Wind, Rainfall |
         | Output | FWI score, Risk level, Crew estimate |
 
-        #### Risk Level Criteria
-        | Level | FWI Range | Description |
-        |-------|-----------|-------------|
-        | Low | 0 ~ 5.2 | Low fire risk |
-        | Moderate | 5.2 ~ 11.2 | Caution advised |
-        | High | 11.2 ~ 21.3 | Fire risk present |
-        | Very High | 21.3 ~ 38 | Immediate action needed |
-        | Extreme | 38+ | Emergency response required |
+        ---
+
+        #### 🚨 Risk Level Criteria (FWI Range)
+
+        | Level | FWI Range | Description | Action |
+        |-------|-----------|-------------|--------|
+        | 🟢 Low | 0 ~ 5.2 | Low fire risk | Routine monitoring |
+        | 🟡 Moderate | 5.2 ~ 11.2 | Caution in dry conditions | Increase patrol |
+        | 🟠 High | 11.2 ~ 21.3 | Fire risk present | Standby crews |
+        | 🔴 Very High | 21.3 ~ 38 | Rapid spread possible | Immediate response |
+        | 🔴 Extreme | 38+ | Large-scale fire risk | Emergency response |
+
+        ---
+
+        #### 👥 Crew Estimation Criteria
+
+        | Role | Ratio | Duty |
+        |------|-------|------|
+        | 🚒 Initial Attack Crew | 42% | Direct firefighting |
+        | 🪖 Forest Service Special Unit | 26% | High-risk zones |
+        | 🚑 Emergency & Rescue | 18% | Life safety & first aid |
+        | 🎯 Command & Control | 14% | On-site coordination |
+
+        > Total crew = (FWI-based base) × (area weight factor)  
+        > Area weight = log₁₀(area + 1) × 1.5 (minimum 1.0)
+
+        ---
+
+        #### 📊 Key Correlations (from training data)
+        | Variable | Correlation with Fire | Direction |
+        |----------|-----------------------|-----------|
+        | Temperature | 0.52 | Higher temp → higher risk ↑ |
+        | Drought Index | 0.51 | Drier → higher risk ↑ |
+        | Humidity | -0.43 | Higher humidity → lower risk ↓ |
+        | Rainfall | -0.38 | More rain → lower risk ↓ |
+        | Wind Speed | -0.07 | Minimal correlation |
         """)
 
     st.markdown("</div>", unsafe_allow_html=True)
