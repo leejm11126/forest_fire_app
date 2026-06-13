@@ -306,7 +306,7 @@ if st.session_state.page == "home":
         st.markdown("""
         ### Welcome
 
-        This AI system analyzes weather conditions in real-time to predict
+        Thissystem analyzes weather conditions in real-time to predict
         the **Fire Weather Index (FWI)** and estimate the **required response crew**.
 
         #### Input Variables
@@ -562,6 +562,6 @@ elif st.session_state.page == "about":
 # ==================================================
 st.divider()
 st.markdown(
-    '<div class="footer">© 2026 Forest Fire Prediction System &nbsp;|&nbsp; Powered by AI</div>',
+    '<div class="footer">© 2026 Forest Fire Prediction System</div>',
     unsafe_allow_html=True
 )
